@@ -829,7 +829,6 @@ class PeftModelForCausalLM(PeftModel):
     def __init__(self, model, peft_config: PeftConfig, adapter_name="default"):
         super().__init__(model, peft_config, adapter_name)
         # 备份self.base_model_prepare_inputs_for_generation
-        # 备份self.base_model_prepare_inputs_for_generation
         self.base_model_prepare_inputs_for_generation = self.get_base_model().prepare_inputs_for_generation
         self.get_base_model()._validate_model_kwargs = self.base_model_validate_model_kwargs
 
@@ -920,8 +919,6 @@ class PeftModelForCausalLM(PeftModel):
         try:
             # MoeLoRAModel.generate
             outputs = self.base_model.generate(**kwargs)
-        except:
-            # 引发异常
         except:
             # 引发异常
             self.get_base_model().prepare_inputs_for_generation = self.base_model_prepare_inputs_for_generation

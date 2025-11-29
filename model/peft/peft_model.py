@@ -1015,6 +1015,9 @@ class PeftModelForCausalLM(PeftModel):
             if "assistant_encoder_outputs" in model_kwargs:
                 model_args |= {"assistant_encoder_outputs"}
 
+        # Allow custom arguments for iLoRA
+        model_args |= {"user_embeds", "gate_weights"}
+
         for key, value in model_kwargs.items():
             if value is not None and key not in model_args:
                 unused_model_args.append(key)

@@ -968,11 +968,8 @@ class PeftModelForCausalLM(PeftModel):
         """Validates model kwargs for generation. Generate argument typos will also be caught here."""
         pass
         # If a `Cache` instance is passed, checks whether the model is compatible with it
-        if isinstance(model_kwargs.get("past_key_values", None), Cache) and not self._supports_cache_class:
-            raise ValueError(
-                f"{self.__class__.__name__} does not support an instance of `Cache` as `past_key_values`. Please "
-                "check the model documentation for supported cache formats."
-            )
+        # Cache check removed as Cache class is not available
+        pass
 
         # Excludes arguments that are handled before calling any model function
         if self.config.is_encoder_decoder:

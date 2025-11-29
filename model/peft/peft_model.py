@@ -829,8 +829,9 @@ class PeftModelForCausalLM(PeftModel):
     def __init__(self, model, peft_config: PeftConfig, adapter_name="default"):
         super().__init__(model, peft_config, adapter_name)
         # 备份self.base_model_prepare_inputs_for_generation
-        self.base_model_prepare_inputs_for_generation = self.base_model.prepare_inputs_for_generation
-        self.base_model._validate_model_kwargs = self.base_model_validate_model_kwargs
+        # 备份self.base_model_prepare_inputs_for_generation
+        self.base_model_prepare_inputs_for_generation = self.get_base_model().prepare_inputs_for_generation
+        self.get_base_model()._validate_model_kwargs = self.base_model_validate_model_kwargs
 
     def forward(
         self,
@@ -911,7 +912,7 @@ class PeftModelForCausalLM(PeftModel):
             return self.base_model(inputs_embeds=inputs_embeds, **kwargs)
 
     def generate(self, **kwargs):
-        self.base_model.prepare_inputs_for_generation = self.prepare_inputs_for_generation
+        self.get_base_model().prepare_inputs_for_generation = self.prepare_inputs_for_generation
         if hasattr(self.base_model, "model"):
             self.base_model.model.generation_config = self.generation_config
         else:
@@ -921,10 +922,12 @@ class PeftModelForCausalLM(PeftModel):
             outputs = self.base_model.generate(**kwargs)
         except:
             # 引发异常
-            self.base_model.prepare_inputs_for_generation = self.base_model_prepare_inputs_for_generation
+        except:
+            # 引发异常
+            self.get_base_model().prepare_inputs_for_generation = self.base_model_prepare_inputs_for_generation
             raise
         else:
-            self.base_model.prepare_inputs_for_generation = self.base_model_prepare_inputs_for_generation
+            self.get_base_model().prepare_inputs_for_generation = self.base_model_prepare_inputs_for_generation
             return outputs
 
     def prepare_inputs_for_generation(self, *args, **kwargs):

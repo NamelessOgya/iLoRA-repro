@@ -10,12 +10,16 @@ def download_model(token=None, output_dir="./models/Llama-2-7b-hf"):
     
     print(f"Downloading {model_id} to {output_dir}...")
     
+    cache_dir = os.path.join(os.path.dirname(output_dir), ".cache")
+    print(f"Using cache dir: {cache_dir}")
+    
     try:
         snapshot_download(
             repo_id=model_id,
             local_dir=output_dir,
             local_dir_use_symlinks=False,
-            token=token
+            token=token,
+            cache_dir=cache_dir
         )
         print("Download complete!")
     except Exception as e:
